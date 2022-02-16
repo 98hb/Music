@@ -1,6 +1,8 @@
 <template>
   <div>
     <!-- <p>我是Layout</p> -->
+    <!-- 头部导航 -->
+    <van-nav-bar title="NavBar" />
     <!-- 一级页面 添加二级页面路由挂载点 -->
     <router-view></router-view>
     <van-tabbar v-model="active" route>

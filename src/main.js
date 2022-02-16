@@ -4,7 +4,10 @@ import "@/mobile/flexible"//适配
 import "@/styles/reset.css"//初始化
 import router from '@/router'//路由对象
 //vant Tabbar TabbarItem 全局注册
-import { Tabbar, TabbarItem } from 'vant';
+// vant NavBar 全局注册
+import { Tabbar, TabbarItem, NavBar } from 'vant';
+
+Vue.use(NavBar);
 
 Vue.use(Tabbar);
 Vue.use(TabbarItem);

@@ -70,7 +70,7 @@
 
 <script>
 // 获取歌曲详情和 歌曲的歌词接口
-import { getSongByIdAPI, getLyricByIdAPI } from '@/api'
+// import { getSongByIdAPI, getLyricByIdAPI } from '@/api'
 import { Icon } from 'vant'
 export default {
   components: {

@@ -1,6 +1,8 @@
 <template>
   <div>
     <p>我是Layout</p>
+    <!-- 二级路由挂载点 -->
+    <router-view></router-view>
   </div>
 </template>
 

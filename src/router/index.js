@@ -19,11 +19,17 @@ const routes = [
         children: [
             {
                 path: 'home',//二级页面
-                component: Home
+                component: Home,
+                meta: {//meta保存路由对象额外信息
+                    title: "首页"
+                }
             },
             {
                 path: 'search',//二级页面
-                component: Search
+                component: Search,
+                meta: {
+                    title: "搜索"
+                }
             }
         ]
     },

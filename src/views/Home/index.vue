@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 二级路由 -->
     <p>我是首页</p>
   </div>
 </template>

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 二级页面 -->
     <p>我是搜索页面</p>
   </div>
 </template>

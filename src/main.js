@@ -3,9 +3,8 @@ import App from './App.vue'
 import "@/mobile/flexible"//适配
 import "@/styles/reset.css"//初始化
 import router from '@/router'//路由对象
-//vant Tabbar TabbarItem 全局注册
-// vant NavBar 全局注册
-import { Tabbar, TabbarItem, NavBar } from 'vant';
+//vant Tabbar TabbarItem NavBar  Col Row Image as VanImage全局注册
+import { Tabbar, TabbarItem, NavBar, Col, Row, Image as VanImage } from 'vant';
 // 全局注册recommendMusic
 import { recommendMusicAPI } from '@/api/index'
 async function myFn() {
@@ -15,6 +14,9 @@ async function myFn() {
   console.log(res);
 }
 myFn()
+Vue.use(VanImage);
+Vue.use(Col);
+Vue.use(Row);
 Vue.use(NavBar);
 Vue.use(Tabbar);
 Vue.use(TabbarItem);

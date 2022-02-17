@@ -1,12 +1,38 @@
 <template>
   <div>
     <!-- 二级路由 -->
-    <p>我是首页</p>
+    <p class="title">推荐歌单</p>
+    <van-row gutter="6">
+      <van-col span="8" v-for="obj in reList" :key="obj.id"
+        ><van-image width="100%" height="3rem" fit="cover" :src="obj.picUrl" />
+        <p class="song_name">{{ obj.name }}</p>
+      </van-col>
+    </van-row>
   </div>
 </template>
 
 <script>
-export default {};
+// 目标: 铺设推荐歌单
+// 1. 布局采用van-row和van-col
+// 2. 使用vant内置的图片组件来显示图片
+// 3. 在main.js注册使用的组件
+// 4.在api/index.js下定义推荐歌单的接口方法
+// 5.把数据请求回来, 用van-image和p标签展示推荐歌单和歌单名字
+import { recommendMusicAPI } from "@/api";
+export default {
+  data() {
+    return {
+      reList: [], //推荐歌单数据
+    };
+  },
+  async created() {
+    const res = await recommendMusicAPI({
+      limit: 6,
+    });
+    console.log(res);
+    this.reList = res.data.result;
+  },
+};
 </script>
 
 <style scoped>

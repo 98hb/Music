@@ -2,9 +2,11 @@
   <div>
     <!-- <p>我是Layout</p> -->
     <!-- 头部导航 -->
-    <van-nav-bar :title="activeTitle" />
+    <van-nav-bar :title="activeTitle" fixed />
     <!-- 一级页面 添加二级页面路由挂载点 -->
-    <router-view></router-view>
+    <div class="main">
+      <router-view></router-view>
+    </div>
     <van-tabbar route>
       <van-tabbar-item replace to="/layout/home" icon="home-o"
         >首页</van-tabbar-item

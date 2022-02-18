@@ -97,13 +97,17 @@ export default {
       });
     },
     async musicFn(xc) {
+      // 点击热搜关键词
+      this.finished = false; //点击新关键词-可能有新的数据
       this.value = xc; //点击每个搜索关键词的value值 等于 点击事件形参传的值(这里传参,上面接收参数)
       const res = await this.getListFn();
       console.log(res);
       this.resultList = res.data.result.songs;
+      this.loading = false;
     },
     async inputFn() {
       //输入框值改变
+      this.finished = false; //输入框改变-可能有新的数据
       if (this.value.length === 0) {
         this.resultList = [];
         return;
@@ -115,11 +119,18 @@ export default {
         return;
       }
       this.resultList = res.data.result.songs;
+      this.loading = false;
     },
     async onLoad() {
       //触底事件(要加载下一页的数据),内部会自动把loading改为true
       this.page++;
       const res = await this.getListFn();
+      if (res.data.result.songs === undefined) {
+        this.finished = true; //只要设置true,list再次触发都不会执行onLoad函数
+        // (显示"没有更多数据")
+        this.loading = false; //加载完成
+        return;
+      }
       this.resultList = [...this.resultList, ...res.data.result.songs];
       this.loading = false; //数据加载完毕-保证下一次还能触发onload
     },

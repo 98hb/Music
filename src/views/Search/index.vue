@@ -2,7 +2,12 @@
   <div>
     <!-- 二级页面 -->
     <p>我是搜索页面</p>
-    <van-search v-model="value" shape="round" placeholder="请输入搜索关键词" />
+    <van-search
+      @input="inputFn"
+      v-model="value"
+      shape="round"
+      placeholder="请输入搜索关键词"
+    />
     <!-- 搜索下容器 -->
     <div class="search_wrap" v-if="resultList.length === 0">
       <!-- 标题 -->
@@ -44,10 +49,13 @@
 // 3. api/index.js - 导入使用并统一导出
 // 4. created中请求接口-拿到热搜关键词列表
 // 5. 点击热词填充到输入框
-// 6.搜索结果显示区域标签+样式(直接复制/vant文档找)
-// 7.点击 - 获取搜索结果 - 循环铺设页面
-// 8.互斥显示, 热搜关键词和搜索结果列表
-// 9.点击文字填充到输入框, 请求搜索结果铺设
+// 6. 搜索结果显示区域标签+样式(直接复制/vant文档找)
+// 7. 点击 - 获取搜索结果 - 循环铺设页面
+// 8. 互斥显示, 热搜关键词和搜索结果列表
+// 9. 点击文字填充到输入框, 请求搜索结果铺设
+// 10.绑定@input事件在van-search上
+// 11.实现输入框改变 - 获取搜索结果铺设
+// 12.监测输入框改变-保存新的关键词去请求结果回来铺设
 import { hotSearchAPI, keySearchAPI } from "@/api";
 // import { keySearchAPI } from "@/api";
 export default {
@@ -64,6 +72,20 @@ export default {
     this.hotArr = res3.data.result.hots;
   },
   methods: {
+    async inputFn() {
+      //输入框值改变
+      if (this.value.length === 0) {
+        this.resultList = [];
+        return;
+      }
+      const res4 = await this.getListFn();
+      console.log(res4);
+      if (res4.data.result.songs === undefined) {
+        this.resultList = [];
+        return;
+      }
+      this.resultList = res4.data.result.songs;
+    },
     async getListFn() {
       return await keySearchAPI({
         keywords: this.value,

@@ -56,20 +56,34 @@
 // 3. api/index.js - 导入使用并统一导出
 // 4. created中请求接口-拿到热搜关键词列表
 // 5. 点击热词填充到输入框
-// 6. 搜索结果显示区域标签+样式(直接复制/vant文档找)
-// 7. 点击 - 获取搜索结果 - 循环铺设页面
-// 8. 互斥显示, 热搜关键词和搜索结果列表
-// 9. 点击文字填充到输入框, 请求搜索结果铺设
-// 10.绑定@input事件在van-search上
-// 11.实现输入框改变 - 获取搜索结果铺设
-// 12.监测输入框改变-保存新的关键词去请求结果回来铺设
-// 13.观察接口文档: 发现需要传入offset和分页公式
-// 14.van-list组件监测触底执行onload事件
-// 15.配合后台接口, 传递下一页的标识
-// 16.拿到下一页数据后追加到当前数组末尾即可
-// 17.list组件负责UI层监测触底, 执行onload函数, page++,
+// 6.   搜索结果显示区域标签+样式(直接复制/vant文档找)
+// 7.   点击 - 获取搜索结果 - 循环铺设页面
+// 8.   互斥显示, 热搜关键词和搜索结果列表
+// 9.   点击文字填充到输入框, 请求搜索结果铺设
+// 10.  绑定@input事件在van-search上
+// 11.  实现输入框改变 - 获取搜索结果铺设
+// 12.  监测输入框改变-保存新的关键词去请求结果回来铺设
+// 13.  观察接口文档: 发现需要传入offset和分页公式
+// 14.  van-list组件监测触底执行onload事件
+// 15.  配合后台接口, 传递下一页的标识
+// 16.  拿到下一页数据后追加到当前数组末尾即可
+// 17.  list组件负责UI层监测触底, 执行onload函数, page++,
 // 请求下页数据, 和现在数据合并显示更多, 设置loading为false,
 // 确保下次触底还能执行onLoad
+// 18.  如果只有一页数据/无数据判断
+// 19.  无数据/只有一页数据, finished为true
+// 20.  防止list组件触底再加载更多
+// 21.  还要测试-按钮点击/输入框有数据情况的加载更多
+// 22.  在3个函数 上和下, 设置finished还未完成, 最后要把loading改成false,
+// 23.  判断songs字段, 对这里的值要非常熟悉才可以
+// 输入框输入"asdfghjkl"
+// 24.  接着快速的删除
+// 25.	每次改变-马上发送网络请求
+// 26.	网络请求异步耗时 – 数据回来后还是铺设到页面上
+// 27.  解决:
+// 28.	引入防抖功能
+// 29.  降低函数执行频率
+
 import { hotSearchAPI, keySearchAPI } from "@/api";
 // import { keySearchAPI } from "@/api";
 export default {
@@ -81,6 +95,7 @@ export default {
       loading: false, //加载中(状态)-只有为false,才能触底后自动触发onload方法
       finished: false, //未加载全部(如果设置为true,底部就不会再次执行onload,代表全部加载完成)
       page: 1, //当前搜索结果的页码
+      timer: null, //输入框-防抖定时器
     };
   },
   async created() {
@@ -106,20 +121,24 @@ export default {
       this.loading = false;
     },
     async inputFn() {
-      //输入框值改变
-      this.finished = false; //输入框改变-可能有新的数据
-      if (this.value.length === 0) {
-        this.resultList = [];
-        return;
-      }
-      const res = await this.getListFn();
-      console.log(res);
-      if (res.data.result.songs === undefined) {
-        this.resultList = [];
-        return;
-      }
-      this.resultList = res.data.result.songs;
-      this.loading = false;
+      if (this.timer) clearTimeout(this.timer);
+      this.timer = setTimeout(async () => {
+        //输入框值改变
+        this.page = 1;
+        this.finished = false; //输入框改变-可能有新的数据
+        if (this.value.length === 0) {
+          this.resultList = [];
+          return;
+        }
+        const res = await this.getListFn();
+        console.log(res);
+        if (res.data.result.songs === undefined) {
+          this.resultList = [];
+          return;
+        }
+        this.resultList = res.data.result.songs;
+        this.loading = false;
+      }, 900);
     },
     async onLoad() {
       //触底事件(要加载下一页的数据),内部会自动把loading改为true

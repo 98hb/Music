@@ -113,6 +113,7 @@ export default {
     },
     async musicFn(xc) {
       // 点击热搜关键词
+      this.page = 1;//点击重新获取第一页数据
       this.finished = false; //点击新关键词-可能有新的数据
       this.value = xc; //点击每个搜索关键词的value值 等于 点击事件形参传的值(这里传参,上面接收参数)
       const res = await this.getListFn();
@@ -121,10 +122,10 @@ export default {
       this.loading = false;
     },
     async inputFn() {
+      this.page = 1;
       if (this.timer) clearTimeout(this.timer);
       this.timer = setTimeout(async () => {
         //输入框值改变
-        this.page = 1;
         this.finished = false; //输入框改变-可能有新的数据
         if (this.value.length === 0) {
           this.resultList = [];

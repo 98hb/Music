@@ -3,3 +3,7 @@ export const hotSearch = params => request({
     url: "/search/hot",
     params
 })
+export const keySearch = params => request({
+    url: "/cloudsearch",
+    params
+})

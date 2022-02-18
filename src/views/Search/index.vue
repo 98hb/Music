@@ -1,7 +1,6 @@
 <template>
   <div>
     <!-- 二级页面 -->
-    <p>我是搜索页面</p>
     <van-search
       @input="inputFn"
       v-model="value"
@@ -34,17 +33,13 @@
         finished-text="没有更多了"
         @load="onLoad"
       >
-        <van-cell
-          center
+        <SongItem
           v-for="obj in resultList"
           :key="obj.id"
-          :title="obj.name"
-          :label="obj.ar[0].name + ' - ' + obj.name"
-        >
-          <template #right-icon>
-            <van-icon name="play-circle-o" size="0.6rem" />
-          </template>
-        </van-cell>
+          :name="obj.name"
+          :author="obj.ar[0].name"
+          :id="obj.id"
+        ></SongItem>
       </van-list>
     </div>
   </div>
@@ -85,6 +80,7 @@
 // 29.  降低函数执行频率
 
 import { hotSearchAPI, keySearchAPI } from "@/api";
+import SongItem from "@/components/SongItem";
 // import { keySearchAPI } from "@/api";
 export default {
   data() {
@@ -113,7 +109,7 @@ export default {
     },
     async musicFn(xc) {
       // 点击热搜关键词
-      this.page = 1;//点击重新获取第一页数据
+      this.page = 1; //点击重新获取第一页数据
       this.finished = false; //点击新关键词-可能有新的数据
       this.value = xc; //点击每个搜索关键词的value值 等于 点击事件形参传的值(这里传参,上面接收参数)
       const res = await this.getListFn();
@@ -154,6 +150,9 @@ export default {
       this.resultList = [...this.resultList, ...res.data.result.songs];
       this.loading = false; //数据加载完毕-保证下一次还能触发onload
     },
+  },
+  components: {
+    SongItem,
   },
 };
 </script>

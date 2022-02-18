@@ -9,19 +9,16 @@
       </van-col>
     </van-row>
     <p class="title">最新音乐</p>
-    <van-cell-group>
-      <van-cell
-        center
-        v-for="obj in songList"
-        :key="obj.id"
-        :title="obj.name"
-        :label="obj.song.artists[0].name + ' - ' + obj.name"
-      >
-        <template #right-icon>
-          <van-icon name="play-circle-o" size="0.6rem" />
-        </template>
-      </van-cell>
-    </van-cell-group>
+    <!--    -->
+    <SongItem
+      v-for="obj in songList"
+      :key="obj.id"
+      :name="obj.name"
+      :author="obj.song.artists[0].name"
+      :id="obj.id"
+    ></SongItem>
+    <!--    <van-cell-group>
+    </van-cell-group> -->
   </div>
 </template>
 
@@ -35,8 +32,9 @@
 // 6. 引入van-cell使用 - 注册组件main.js中
 // 7. 定义接口请求方法 - api/index.js
 // 8. 列表数据铺设 - 插入自定义标签
-//
+
 import { recommendMusicAPI, newMusicAPI } from "@/api";
+import SongItem from "@/components/SongItem";
 export default {
   data() {
     return {
@@ -55,6 +53,9 @@ export default {
     });
     console.log(res2);
     this.songList = res.data.result;
+  },
+  components: {
+    SongItem,
   },
 };
 </script>
@@ -79,9 +80,5 @@ export default {
   -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
   -webkit-line-clamp: 2; /** 显示的行数 **/
   overflow: hidden; /** 隐藏超出的内容 **/
-}
-/* 给单元格设置底部边框 */
-.van-cell {
-  border-bottom: 1px solid lightgray;
 }
 </style>

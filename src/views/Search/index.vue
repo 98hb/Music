@@ -28,17 +28,24 @@
     <div class="search_wrap" v-else>
       <!-- 标题 -->
       <p class="hot_title">最佳匹配</p>
-      <van-cell
-        center
-        v-for="obj in resultList"
-        :key="obj.id"
-        :title="obj.name"
-        :label="obj.ar[0].name + ' - ' + obj.name"
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
       >
-        <template #right-icon>
-          <van-icon name="play-circle-o" size="0.6rem" />
-        </template>
-      </van-cell>
+        <van-cell
+          center
+          v-for="obj in resultList"
+          :key="obj.id"
+          :title="obj.name"
+          :label="obj.ar[0].name + ' - ' + obj.name"
+        >
+          <template #right-icon>
+            <van-icon name="play-circle-o" size="0.6rem" />
+          </template>
+        </van-cell>
+      </van-list>
     </div>
   </div>
 </template>
@@ -56,6 +63,13 @@
 // 10.绑定@input事件在van-search上
 // 11.实现输入框改变 - 获取搜索结果铺设
 // 12.监测输入框改变-保存新的关键词去请求结果回来铺设
+// 13.观察接口文档: 发现需要传入offset和分页公式
+// 14.van-list组件监测触底执行onload事件
+// 15.配合后台接口, 传递下一页的标识
+// 16.拿到下一页数据后追加到当前数组末尾即可
+// 17.list组件负责UI层监测触底, 执行onload函数, page++,
+// 请求下页数据, 和现在数据合并显示更多, 设置loading为false,
+// 确保下次触底还能执行onLoad
 import { hotSearchAPI, keySearchAPI } from "@/api";
 // import { keySearchAPI } from "@/api";
 export default {
@@ -64,39 +78,50 @@ export default {
       value: "",
       hotArr: [], //热搜关键字
       resultList: [], //搜索结果
+      loading: false, //加载中(状态)-只有为false,才能触底后自动触发onload方法
+      finished: false, //未加载全部(如果设置为true,底部就不会再次执行onload,代表全部加载完成)
+      page: 1, //当前搜索结果的页码
     };
   },
   async created() {
-    const res3 = await hotSearchAPI();
-    console.log(res3);
-    this.hotArr = res3.data.result.hots;
+    const res = await hotSearchAPI();
+    console.log(res);
+    this.hotArr = res.data.result.hots;
   },
   methods: {
+    async getListFn() {
+      return await keySearchAPI({
+        keywords: this.value,
+        limit: 20,
+        offset: (this.page - 1) * 20, //固定公式
+      });
+    },
+    async musicFn(xc) {
+      this.value = xc; //点击每个搜索关键词的value值 等于 点击事件形参传的值(这里传参,上面接收参数)
+      const res = await this.getListFn();
+      console.log(res);
+      this.resultList = res.data.result.songs;
+    },
     async inputFn() {
       //输入框值改变
       if (this.value.length === 0) {
         this.resultList = [];
         return;
       }
-      const res4 = await this.getListFn();
-      console.log(res4);
-      if (res4.data.result.songs === undefined) {
+      const res = await this.getListFn();
+      console.log(res);
+      if (res.data.result.songs === undefined) {
         this.resultList = [];
         return;
       }
-      this.resultList = res4.data.result.songs;
+      this.resultList = res.data.result.songs;
     },
-    async getListFn() {
-      return await keySearchAPI({
-        keywords: this.value,
-        limit: 20,
-      });
-    },
-    async musicFn(xc) {
-      this.value = xc; //点击每个搜索关键词的value值 等于 点击事件形参传的值(这里传参,上面接收参数)
-      const res4 = await this.getListFn();
-      console.log(res4);
-      this.resultList = res4.data.result.songs;
+    async onLoad() {
+      //触底事件(要加载下一页的数据),内部会自动把loading改为true
+      this.page++;
+      const res = await this.getListFn();
+      this.resultList = [...this.resultList, ...res.data.result.songs];
+      this.loading = false; //数据加载完毕-保证下一次还能触发onload
     },
   },
 };

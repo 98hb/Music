@@ -54,7 +54,7 @@ export default {
       limit: 20,
     });
     console.log(res2);
-    this.songList = res2.data.result;
+    this.songList = res.data.result;
   },
 };
 </script>
